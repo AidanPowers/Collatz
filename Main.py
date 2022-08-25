@@ -16,7 +16,7 @@ from timeit import default_timer as timer
 from scipy import interpolate as intp
 from scipy import integrate as intg
 
-from numba import jit, njit, vectorize, prange ,uint64
+from numba import jit, njit, vectorize, prange ,uint64, cuda
 
 
 #the number of ops required to reach 1 for a given value
@@ -30,7 +30,49 @@ def collDeg(i):
         else: #if odd (!even) 
             i = i*3 + 1 #multiply by 3 add 1
     return(j)
-    
+
+def onlyUp(i):
+    j = 0
+    while bin(i).count("1") != 1:
+        i = i*3 + 1
+        j = j + 1
+        #print(i)
+    return j
+
+def countTurns(i):
+    binary = bin(int(i))
+    t0=binary.count("0")-1
+    t1=binary.count("1")
+    turns = t1 - t0
+    length = len(binary)-2
+    return(turns)
+
+def turnLook(i):
+    j = [countTurns(i)]
+    while i > 1: #while it is still not true
+        #j = j + 1
+        if i%2==0: #if even 
+            i = i / 2 #divide by 2
+        else: #if odd (!even) 
+            i = i*3 + 1 #multiply by 3 add 1
+        turns = countTurns(i)
+        j.append(turns)
+    return(j)
+
+def floatLook(i):
+    j = [countTurns(i)]
+    wasEven = False
+    while i > 1: #while it is still not true
+        #j = j + 1
+        if i%2==0 or wasEven: #if even 
+            i = i / 2 #divide by 2
+            wasEven = True
+        else: #if odd (!even) 
+            i = i*3 + 1 #multiply by 3 add 1
+        j.append(i)
+    return(j)
+
+
 def bench(num):
     
     start = timer() #start timer
