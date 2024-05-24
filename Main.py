@@ -20,7 +20,7 @@ from numba import jit, njit, vectorize, prange ,uint64, cuda
 
 
 #the number of ops required to reach 1 for a given value
-@vectorize([uint64(uint64)],target='parallel') #turns this function into a high speed parallel array cruncher, if only I had a cuda gpu
+@vectorize([uint64(uint64)],target='cuda') #turns this function into a high speed parallel array cruncher, if only I had a cuda gpu
 def collDeg(i):
     j = 0
     while i > 1: #while it is still not true
